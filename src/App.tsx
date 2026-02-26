@@ -23,9 +23,10 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from './supabaseClient';
 
 interface Student {
-  id: number;
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -54,9 +55,12 @@ export default function App() {
 
   const fetchStudents = async () => {
     try {
-      const response = await fetch('/api/students');
-      const data = await response.json();
-      setStudents(data);
+      const { data, error } = await supabase
+        .from('students')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      setStudents(data ?? []);
     } catch (error) {
       console.error('Error fetching students:', error);
     } finally {
@@ -67,16 +71,13 @@ export default function App() {
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/students', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newStudent)
-      });
-      if (response.ok) {
-        fetchStudents();
-        setIsModalOpen(false);
-        setNewStudent({ name: '', email: '', phone: '', plan: 'Mensal', status: 'Ativo' });
-      }
+      const { error } = await supabase
+        .from('students')
+        .insert([newStudent]);
+      if (error) throw error;
+      fetchStudents();
+      setIsModalOpen(false);
+      setNewStudent({ name: '', email: '', phone: '', plan: 'Mensal', status: 'Ativo' });
     } catch (error) {
       console.error('Error adding student:', error);
     }
