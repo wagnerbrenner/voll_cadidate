@@ -5,6 +5,7 @@ export interface Student {
   phone: string;
   status: string;
   plan: string;
+  plan_start_date: string;
   created_at: string;
 }
 
@@ -13,5 +14,6 @@ export interface NewStudent {
   email: string;
   phone: string;
   plan: string;
+  plan_start_date: string;
   status: string;
 }

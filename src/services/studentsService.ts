@@ -12,11 +12,35 @@ export const studentsService = {
     return data ?? [];
   },
 
-  async addStudent(student: NewStudent): Promise<void> {
-    if (!isSupabaseConfigured) return;
+  async addStudent(student: NewStudent): Promise<Student> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const { data, error } = await supabase
+      .from('students')
+      .insert([student])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  },
+
+  async updateStudent(id: string, student: Partial<NewStudent>): Promise<void> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
     const { error } = await supabase
       .from('students')
-      .insert([student]);
+      .update(student)
+      .eq('id', id);
+    
+    if (error) throw error;
+  },
+
+  async deleteStudent(id: string): Promise<void> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const { error } = await supabase
+      .from('students')
+      .delete()
+      .eq('id', id);
+    
     if (error) throw error;
   }
 };

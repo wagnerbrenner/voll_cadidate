@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Settings } from 'lucide-react';
+import { toast } from 'sonner';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Dashboard } from './components/Dashboard';
 import { StudentsModule } from './components/StudentsModule';
 import { ScheduleModule } from './components/ScheduleModule';
+import { FinancialPage } from './modules/financial/FinancialPage';
 import { AddStudentModal } from './components/AddStudentModal';
+import { WhatsAppMessageWidget } from './components/WhatsAppMessageWidget';
 import { studentsService } from './services/studentsService';
+import { subscriptionService } from './modules/students/services/subscription.service';
 import { Student, NewStudent } from './types/student';
 import { isSupabaseConfigured } from './supabaseClient';
 
@@ -14,7 +18,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [students, setStudents] = useState<Student[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   
   const [newStudent, setNewStudent] = useState<NewStudent>({
@@ -22,6 +25,7 @@ export default function App() {
     email: '',
     phone: '',
     plan: 'Mensal',
+    plan_start_date: new Date().toISOString().split('T')[0],
     status: 'Ativo'
   });
 
@@ -44,12 +48,25 @@ export default function App() {
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await studentsService.addStudent(newStudent);
+      const createdStudent = await studentsService.addStudent(newStudent);
+      
+      // Automatically generate financial records based on plan
+      await subscriptionService.createFinancialRecordsForStudent(createdStudent);
+      
       fetchStudents();
       setIsModalOpen(false);
-      setNewStudent({ name: '', email: '', phone: '', plan: 'Mensal', status: 'Ativo' });
+      setNewStudent({ 
+        name: '', 
+        email: '', 
+        phone: '', 
+        plan: 'Mensal', 
+        plan_start_date: new Date().toISOString().split('T')[0],
+        status: 'Ativo' 
+      });
+      toast.success('Aluno cadastrado com sucesso!');
     } catch (error) {
       console.error('Error adding student:', error);
+      toast.error('Erro ao cadastrar aluno. Tente novamente.');
     }
   };
 
@@ -59,8 +76,6 @@ export default function App() {
 
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
         <Header 
-          searchTerm={searchTerm} 
-          setSearchTerm={setSearchTerm} 
           onNewStudentClick={() => setIsModalOpen(true)} 
         />
 
@@ -88,10 +103,11 @@ export default function App() {
             <StudentsModule 
               students={students} 
               loading={loading} 
-              searchTerm={searchTerm} 
+              onRefresh={fetchStudents}
             />
           )}
           {activeTab === 'schedule' && <ScheduleModule students={students} />}
+          {activeTab === 'financial' && <FinancialPage />}
         </div>
       </main>
 
@@ -102,6 +118,8 @@ export default function App() {
         newStudent={newStudent}
         setNewStudent={setNewStudent}
       />
+
+      <WhatsAppMessageWidget students={students} />
     </div>
   );
 }

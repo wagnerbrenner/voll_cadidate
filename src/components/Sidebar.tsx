@@ -73,7 +73,8 @@ export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
           <NavItem 
             icon={<TrendingUp size={20} />} 
             label="Financeiro" 
-            disabled 
+            active={activeTab === 'financial'} 
+            onClick={() => setActiveTab('financial')}
           />
         </nav>
       </div>
