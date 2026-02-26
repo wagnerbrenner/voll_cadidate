@@ -104,25 +104,44 @@ export function AddStudentModal({
                                     />
                                 </div>
                             </div>
-                            <div>
-                                <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
-                                    Plano
-                                </label>
-                                <select
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                                    value={newStudent.plan}
-                                    onChange={(e) =>
-                                        setNewStudent({
-                                            ...newStudent,
-                                            plan: e.target.value
-                                        })
-                                    }
-                                >
-                                    <option>Mensal</option>
-                                    <option>Trimestral</option>
-                                    <option>Semestral</option>
-                                    <option>Anual</option>
-                                </select>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                                        Plano
+                                    </label>
+                                    <select
+                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 bg-white"
+                                        value={newStudent.plan}
+                                        onChange={(e) =>
+                                            setNewStudent({
+                                                ...newStudent,
+                                                plan: e.target.value
+                                            })
+                                        }
+                                    >
+                                        <option>Mensal</option>
+                                        <option>Trimestral</option>
+                                        <option>Semestral</option>
+                                        <option>Anual</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
+                                        Início do Plano
+                                    </label>
+                                    <input
+                                        required
+                                        type="date"
+                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                        value={newStudent.plan_start_date}
+                                        onChange={(e) =>
+                                            setNewStudent({
+                                                ...newStudent,
+                                                plan_start_date: e.target.value
+                                            })
+                                        }
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
