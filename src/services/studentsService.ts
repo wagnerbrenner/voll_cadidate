@@ -1,16 +1,16 @@
-import { supabase, isSupabaseConfigured } from '../supabaseClient';
-import { Student, NewStudent } from '../types/student';
+import { supabase, isSupabaseConfigured } from "../supabaseClient";
+import { Student, NewStudent } from "../types/student";
 
 export const studentsService = {
-  async fetchStudents(): Promise<Student[]> {
-    if (!isSupabaseConfigured) return [];
-    const { data, error } = await supabase
-      .from('students')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data ?? [];
-  },
+    async fetchStudents(): Promise<Student[]> {
+        if (!isSupabaseConfigured) return [];
+        const { data, error } = await supabase
+            .from("students")
+            .select("*")
+            .order("created_at", { ascending: false });
+        if (error) throw error;
+        return data ?? [];
+    },
 
   async addStudent(student: NewStudent): Promise<Student> {
     if (!isSupabaseConfigured) throw new Error('Supabase not configured');

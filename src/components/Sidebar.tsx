@@ -1,45 +1,55 @@
-import React from 'react';
-import { 
-  Users, 
-  LayoutDashboard, 
-  Calendar, 
-  TrendingUp, 
-  Settings, 
-  LogOut,
-  ChevronRight
-} from 'lucide-react';
+import React from "react";
+import {
+    Users,
+    LayoutDashboard,
+    Calendar,
+    TrendingUp,
+    Settings,
+    LogOut,
+    ChevronRight
+} from "lucide-react";
 
 interface NavItemProps {
-  icon: React.ReactNode;
-  label: string;
-  active?: boolean;
-  disabled?: boolean;
-  onClick?: () => void;
+    icon: React.ReactNode;
+    label: string;
+    active?: boolean;
+    disabled?: boolean;
+    onClick?: () => void;
 }
 
-function NavItem({ icon, label, active = false, disabled = false, onClick }: NavItemProps) {
-  return (
-    <div 
-      onClick={!disabled ? onClick : undefined}
-      className={`
+function NavItem({
+    icon,
+    label,
+    active = false,
+    disabled = false,
+    onClick
+}: NavItemProps) {
+    return (
+        <div
+            onClick={!disabled ? onClick : undefined}
+            className={`
         flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all group
-        ${active ? 'bg-emerald-50 text-emerald-700' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'}
-        ${disabled ? 'opacity-40 cursor-not-allowed grayscale' : ''}
+        ${active ? "bg-emerald-50 text-emerald-700" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"}
+        ${disabled ? "opacity-40 cursor-not-allowed grayscale" : ""}
       `}
-    >
-      <div className="flex items-center gap-3">
-        {icon}
-        <span className="text-sm font-medium">{label}</span>
-      </div>
-      {active && <ChevronRight size={14} />}
-      {disabled && <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">Em breve</span>}
-    </div>
-  );
+        >
+            <div className="flex items-center gap-3">
+                {icon}
+                <span className="text-sm font-medium">{label}</span>
+            </div>
+            {active && <ChevronRight size={14} />}
+            {disabled && (
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-200 text-slate-500 px-1.5 py-0.5 rounded">
+                    Em breve
+                </span>
+            )}
+        </div>
+    );
 }
 
 interface SidebarProps {
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+    activeTab: string;
+    setActiveTab: (tab: string) => void;
 }
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
