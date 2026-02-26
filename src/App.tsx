@@ -1,23 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { Settings } from "lucide-react";
-import { Sidebar } from "./components/Sidebar";
-import { Header } from "./components/Header";
-import { Dashboard } from "./components/Dashboard";
-import { StudentsModule } from "./components/StudentsModule";
-import { ScheduleModule } from "./components/ScheduleModule";
-import { FinancialPage } from "./modules/financial/FinancialPage";
-import { AddStudentModal } from "./components/AddStudentModal";
-import { studentsService } from "./services/studentsService";
-import { subscriptionService } from "./modules/students/services/subscription.service";
-import { Student, NewStudent } from "./types/student";
-import { isSupabaseConfigured } from "./supabaseClient";
+import React, { useState, useEffect } from 'react';
+import { Settings } from 'lucide-react';
+import { toast } from 'sonner';
+import { Sidebar } from './components/Sidebar';
+import { Header } from './components/Header';
+import { Dashboard } from './components/Dashboard';
+import { StudentsModule } from './components/StudentsModule';
+import { ScheduleModule } from './components/ScheduleModule';
+import { FinancialPage } from './modules/financial/FinancialPage';
+import { AddStudentModal } from './components/AddStudentModal';
+import { WhatsAppMessageWidget } from './components/WhatsAppMessageWidget';
+import { studentsService } from './services/studentsService';
+import { subscriptionService } from './modules/students/services/subscription.service';
+import { Student, NewStudent } from './types/student';
+import { isSupabaseConfigured } from './supabaseClient';
 
 export default function App() {
-    const [activeTab, setActiveTab] = useState("dashboard");
-    const [students, setStudents] = useState<Student[]>([]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [students, setStudents] = useState<Student[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  const [newStudent, setNewStudent] = useState<NewStudent>({
+    name: '',
+    email: '',
+    phone: '',
+    plan: 'Mensal',
+    plan_start_date: new Date().toISOString().split('T')[0],
+    status: 'Ativo'
+  });
 
     const [newStudent, setNewStudent] = useState<NewStudent>({
         name: "",
@@ -32,27 +42,40 @@ export default function App() {
         fetchStudents();
     }, []);
 
-    const fetchStudents = async () => {
-        try {
-            setLoading(true);
-            const data = await studentsService.fetchStudents();
-            setStudents(data);
-        } catch (error) {
-            console.error("Error fetching students:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const handleAddStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const createdStudent = await studentsService.addStudent(newStudent);
+      
+      // Automatically generate financial records based on plan
+      await subscriptionService.createFinancialRecordsForStudent(createdStudent);
+      
+      fetchStudents();
+      setIsModalOpen(false);
+      setNewStudent({ 
+        name: '', 
+        email: '', 
+        phone: '', 
+        plan: 'Mensal', 
+        plan_start_date: new Date().toISOString().split('T')[0],
+        status: 'Ativo' 
+      });
+      toast.success('Aluno cadastrado com sucesso!');
+    } catch (error) {
+      console.error('Error adding student:', error);
+      toast.error('Erro ao cadastrar aluno. Tente novamente.');
+    }
+  };
 
     const handleAddStudent = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const createdStudent = await studentsService.addStudent(newStudent);
 
-            // Automatically generate financial records based on plan
-            await subscriptionService.createFinancialRecordsForStudent(
-                createdStudent
-            );
+      <main className="flex-1 flex flex-col h-screen overflow-hidden">
+        <Header 
+          onNewStudentClick={() => setIsModalOpen(true)} 
+        />
 
             fetchStudents();
             setIsModalOpen(false);
@@ -125,13 +148,28 @@ export default function App() {
                 </div>
             </main>
 
-            <AddStudentModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onAdd={handleAddStudent}
-                newStudent={newStudent}
-                setNewStudent={setNewStudent}
+          {activeTab === 'dashboard' && <Dashboard students={students} />}
+          {activeTab === 'students' && (
+            <StudentsModule 
+              students={students} 
+              loading={loading} 
+              onRefresh={fetchStudents}
             />
+          )}
+          {activeTab === 'schedule' && <ScheduleModule students={students} />}
+          {activeTab === 'financial' && <FinancialPage />}
         </div>
-    );
+      </main>
+
+      <AddStudentModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onAdd={handleAddStudent}
+        newStudent={newStudent}
+        setNewStudent={setNewStudent}
+      />
+
+      <WhatsAppMessageWidget students={students} />
+    </div>
+  );
 }

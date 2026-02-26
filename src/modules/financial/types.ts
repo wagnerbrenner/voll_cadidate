@@ -1,5 +1,5 @@
 export type FinancialType = 'payable' | 'receivable';
-export type FinancialStatus = 'pending' | 'paid';
+export type FinancialStatus = 'pending' | 'paid' | 'cancelled';
 
 export interface FinancialRecord {
   id: string;

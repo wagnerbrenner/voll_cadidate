@@ -33,5 +33,25 @@ export const financialService = {
       .eq('id', id);
     
     if (error) throw error;
+  },
+
+  async cancelFinancialRecord(id: string): Promise<void> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const { error } = await supabase
+      .from('financial_records')
+      .update({ status: 'cancelled' })
+      .eq('id', id);
+    
+    if (error) throw error;
+  },
+
+  async updateDueDate(id: string, dueDate: string): Promise<void> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const { error } = await supabase
+      .from('financial_records')
+      .update({ due_date: dueDate })
+      .eq('id', id);
+    
+    if (error) throw error;
   }
 };

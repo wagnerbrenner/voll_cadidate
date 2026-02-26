@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, DollarSign, Calendar, FileText } from 'lucide-react';
+import { toast } from 'sonner';
 import { NewFinancialRecord, FinancialType } from '../types';
 
 interface FinancialFormProps {
@@ -19,7 +20,7 @@ export function FinancialForm({ onSave }: FinancialFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!record.description || record.amount <= 0 || !record.due_date) {
-      alert('Por favor, preencha todos os campos obrigatórios e garanta que o valor seja maior que zero.');
+      toast.warning('Preencha todos os campos obrigatórios e garanta que o valor seja maior que zero.');
       return;
     }
 
@@ -35,7 +36,7 @@ export function FinancialForm({ onSave }: FinancialFormProps) {
       });
     } catch (error) {
       console.error('Erro ao salvar lançamento:', error);
-      alert('Erro ao salvar lançamento financeiro.');
+      toast.error('Erro ao salvar lançamento financeiro. Tente novamente.');
     } finally {
       setSubmitting(false);
     }

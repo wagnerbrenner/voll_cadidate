@@ -16,7 +16,25 @@ export const scheduleService = {
     if (!isSupabaseConfigured) return;
     const { error } = await supabase
       .from('schedule')
-      .insert([schedule]);
+      .insert([{ ...schedule, status: 'scheduled' }]);
+    if (error) throw error;
+  },
+
+  async updateSchedule(id: string, schedule: Partial<NewSchedule>): Promise<void> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const { error } = await supabase
+      .from('schedule')
+      .update(schedule)
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async cancelSchedule(id: string): Promise<void> {
+    if (!isSupabaseConfigured) throw new Error('Supabase not configured');
+    const { error } = await supabase
+      .from('schedule')
+      .update({ status: 'cancelled' })
+      .eq('id', id);
     if (error) throw error;
   }
 };

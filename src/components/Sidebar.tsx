@@ -53,50 +53,46 @@ interface SidebarProps {
 }
 
 export function Sidebar({ activeTab, setActiveTab }: SidebarProps) {
-    return (
-        <aside className="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col">
-            <div className="p-6">
-                <div className="flex items-center gap-2 mb-8">
-                    <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
-                        V
-                    </div>
-                    <h1 className="text-xl font-bold tracking-tight text-emerald-900">
-                        VOLL Candidate
-                    </h1>
-                </div>
-
-                <nav className="space-y-1">
-                    <NavItem
-                        icon={<LayoutDashboard size={20} />}
-                        label="Dashboard"
-                        active={activeTab === "dashboard"}
-                        onClick={() => setActiveTab("dashboard")}
-                    />
-                    <NavItem
-                        icon={<Users size={20} />}
-                        label="Alunos"
-                        active={activeTab === "students"}
-                        onClick={() => setActiveTab("students")}
-                    />
-                    <NavItem
-                        icon={<Calendar size={20} />}
-                        label="Agenda"
-                        active={activeTab === "schedule"}
-                        onClick={() => setActiveTab("schedule")}
-                    />
-                    <NavItem
-                        icon={<TrendingUp size={20} />}
-                        label="Financeiro"
-                        active={activeTab === "financial"}
-                        onClick={() => setActiveTab("financial")}
-                    />
-                </nav>
-            </div>
-
-            <div className="mt-auto p-6 border-t border-slate-100">
-                <NavItem icon={<Settings size={20} />} label="Configurações" />
-                <NavItem icon={<LogOut size={20} />} label="Sair" />
-            </div>
-        </aside>
-    );
+  return (
+    <aside className="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col">
+      <div className="p-6">
+        <div className="flex items-center gap-2 mb-8">
+          <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">V</div>
+          <h1 className="text-xl font-bold tracking-tight text-emerald-900">VOLL Candidate</h1>
+        </div>
+        
+        <nav className="space-y-1">
+          <NavItem 
+            icon={<LayoutDashboard size={20} />} 
+            label="Dashboard" 
+            active={activeTab === 'dashboard'} 
+            onClick={() => setActiveTab('dashboard')}
+          />
+          <NavItem 
+            icon={<Users size={20} />} 
+            label="Alunos" 
+            active={activeTab === 'students'} 
+            onClick={() => setActiveTab('students')}
+          />
+          <NavItem 
+            icon={<Calendar size={20} />} 
+            label="Agenda" 
+            active={activeTab === 'schedule'} 
+            onClick={() => setActiveTab('schedule')}
+          />
+          <NavItem 
+            icon={<TrendingUp size={20} />} 
+            label="Financeiro" 
+            active={activeTab === 'financial'} 
+            onClick={() => setActiveTab('financial')}
+          />
+        </nav>
+      </div>
+      
+      <div className="mt-auto p-6 border-t border-slate-100">
+        <NavItem icon={<Settings size={20} />} label="Configurações" />
+        <NavItem icon={<LogOut size={20} />} label="Sair" />
+      </div>
+    </aside>
+  );
 }
